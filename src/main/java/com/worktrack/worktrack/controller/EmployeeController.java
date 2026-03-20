@@ -1,10 +1,12 @@
 package com.worktrack.worktrack.controller;
 
+import com.worktrack.worktrack.dto.EmployeeRequest;
 import com.worktrack.worktrack.dto.EmployeeResponse;
 import com.worktrack.worktrack.dto.EmployeeUpdateRequest;
 import com.worktrack.worktrack.dto.SuccessResponse;
 import com.worktrack.worktrack.entity.Employee;
 import com.worktrack.worktrack.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +27,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeResponse> createEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<EmployeeResponse> createEmployee(@RequestBody @Valid EmployeeRequest employee) {
         EmployeeResponse savedEmployee = empService.createEmployee(employee);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
     }
@@ -33,12 +35,12 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeResponse> getEmployeeDetailsById(@PathVariable Long id) {
-        EmployeeResponse response = empService.GetEmployeeById(id);
+        EmployeeResponse response = empService.getEmployeeById(id);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity <Page<EmployeeResponse>> getAllEmployeeDetails(@RequestParam int page, @RequestParam(defaultValue = "2") int size) {
+    public ResponseEntity <Page<EmployeeResponse>> getAllEmployeeDetails(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size) ;
 
         Page<EmployeeResponse> getAllEmployeeResponse = empService.getAllEmployeeDetails(pageable);
